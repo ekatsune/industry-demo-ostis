@@ -2,9 +2,6 @@
 	path = knowledge-base/ims.ostis.kb
 	url = https://github.com/ostis-ai/ims.ostis.kb.git
 
-[submodule "interface/sc-web"]
-	path = interface/sc-web
-	url = https://github.com/ostis-ai/sc-web
 [submodule "knowledge-base/isa-5.1-ostis"]
 	path = knowledge-base/isa-5.1-ostis
 	url = https://github.com/savushkin-r-d/isa-5.1-ostis
