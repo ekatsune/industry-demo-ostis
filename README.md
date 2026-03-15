@@ -83,6 +83,21 @@ Docker simplifies setup and provides a consistent environment.
 Steps for installing and running the application directly on your system.
 
 1.  **Install basic tools for development environment:**
+    *   **Fedora:** 
+        
+        ```sh
+        sudo dnf update
+
+        sudo dnf install -y \
+            curl \
+            ccache \
+            python3 \
+            python3-pip \
+            gcc \
+            gcc-c++ \
+            make \
+            ninja-build
+        ```
 
     *   **Ubuntu/Debian (GCC):** 
         
@@ -174,32 +189,31 @@ Steps for installing and running the application directly on your system.
     
     `--build=missing` builds dependencies from source if pre-built binaries are not available.
 
-8.  **Install sc-machine binaries:**
+8.  **Install sc-machine and scl-machine binaries:**
    
     sc-machine binaries are pre-compiled executables that provide the runtime environment for the ostis-system: build knowledge base source and launch the ostis-system. The installation process differs slightly between Linux and macOS:
 
-    *   **Linux:**
-
-        ```sh
-        curl -LO https://github.com/ostis-ai/sc-machine/releases/download/0.10.0/sc-machine-0.10.0-Linux.tar.gz
-        mkdir sc-machine && tar -xvzf sc-machine-0.10.0-Linux.tar.gz -C sc-machine --strip-components 1
-        rm -rf sc-machine-0.10.0-Linux.tar.gz && rm -rf sc-machine/include
-        ```
-
-    *   **macOS:**
-
-        ```sh
-        curl -LO https://github.com/ostis-ai/sc-machine/releases/download/0.10.0/sc-machine-0.10.0-Darwin.tar.gz
-        mkdir sc-machine && tar -xvzf sc-machine-0.10.0-Darwin.tar.gz -C sc-machine --strip-components 1
-        rm -rf sc-machine-0.10.0-Darwin.tar.gz && rm -rf sc-machine/include
-        ```
+    scl-machine binaries are pre-compiled modules with agents of logical inferences.
+    
+    ```sh
+    ./scripts/install_cxx_problem_solver.sh
+    ```
     
     Downloads and extracts pre-built `sc-machine` binaries for your operating system. The `include` directory is removed because it is not required.
 
 9.  **Install sc-web:**
 
     sc-web provides the web-based user interface for the ostis-system. The installation process includes setting up dependencies and building the interface:
-
+    
+    *   **Fedora:**
+    
+        ```sh
+        cd interface/sc-web
+        sudo dnf install python3 python3-pip python3-virtualenv nodejs npm
+        bash /scripts/install_deps_npm.sh
+        bash /scripts/install_deps_python.sh
+        ```
+        
     *   **Ubuntu/Debian:**
 
         ```sh
@@ -240,17 +254,17 @@ Steps for installing and running the application directly on your system.
     The knowledge base contains your custom knowledge represented in SC-code. It needs to be built before launching the system or after making changes:
 
     ```sh
-    ./sc-machine/bin/sc-builder -i repo.path -o kb.bin --clear
+    ./scripts/start.sh build_kb
     ```
     
-    This command builds the knowledge base from the `.scs` and `.gwf` files in the `knowledge-base` directory, creating the `kb.bin` file. The `--clear` flag clears the knowledge base before building.
+    This command builds the knowledge base from the `.scs` and `.gwf` files in the `knowledge-base` directory, creating the `kb.bin` directory.
 
 ## Running ostis-system
 
 1.  **Start `sc-machine` (in a terminal):**
 
     ```sh
-    ./sc-machine/bin/sc-machine -s kb.bin -e "sc-machine/lib/extensions;build/Release/extensions"
+    ./scripts/start.sh machine
     ```
     
     Starts the `sc-machine`, loading the knowledge base (`kb.bin`) and specifying the paths to the extensions.
@@ -258,11 +272,10 @@ Steps for installing and running the application directly on your system.
 2.  **Start `sc-web` interface (in a separate terminal):**
 
     ```sh
-    cd interface/sc-web
-    source .venv/bin/activate && python3 server/app.py
+    ./scripts/start.sh web
     ```
     
-    Starts the `sc-web`. `source .venv/bin/activate` activates the virtual environment for `sc-web`, and `python3 server/app.py` starts the web server.
+    Starts the web server.
 
 3.  **Access interface:** Open `localhost:8000` in your web browser.
 
@@ -288,7 +301,7 @@ Then open `http://127.0.0.1:8005/` in your browser.
 *   **`knowledge-base`**: Contains the knowledge base source files (`.scs`, `.gwf`). Rebuild the knowledge base after making changes:
 
     ```sh
-    ./sc-machine/bin/sc-builder -i repo.path -o kb.bin --clear
+    ./scripts/start.sh build_kb
     ```
 
 *   **`problem-solver`**: Contains the C++ agents that implement the problem-solving logic. Rebuild after modifying:
@@ -313,12 +326,14 @@ Then open `http://127.0.0.1:8005/` in your browser.
     cmake --build --preset release
     ```
 
-    To enable debug logs, configure `ostis-example-app.ini`:
+    To update log type and log level of agent, modify constructor of agent class. By default, logs of agents execution are stored in the `logs` directory:
 
-    ```sh
-    log_type = Console
-    log_file = sc-memory.log
-    log_level = Debug
+    ```plain
+    logs/
+    |--ExampleInferenceAgent.log
+    |--IsomorphicSearchAgent.log
+    |--PathSearchAgent.log
+    |--SubdividingSearchAgent.log
     ```
 
 ## Code Style

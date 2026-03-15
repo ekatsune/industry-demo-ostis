@@ -2,7 +2,7 @@ This is an agent that searches minimal path between two nodes of weighted graph.
 
 **Action class:**
 
-`action_find_minimum_path`
+`action_search_minimum_path`
 
 **Parameters:**
 
@@ -21,7 +21,7 @@ This is an agent that searches minimal path between two nodes of weighted graph.
 
 * Connector weight template should contain 2 key elements variables connected to it with rrel_1 and rrel_2 relations:
     * Variable representing connector (connected with rrel_1);
-    * Variable representing number with connector weight (connected with rrel_2). Note that this agent does not perform conversion of measurement units and relies on the assumption that numbers obtained via this template represent measurements in the same units for each connector.
+    * Variable representing number with connector weight (connected with rrel_2). Note that This agent does not perform conversion of measurement units and depends on the fact that numbers found by via this template are represent measurement in the same units for each connector.
 
 * Result of this agent work is a path for start to end node with its weight if such path exists. See example below.
 
@@ -29,11 +29,11 @@ This is an agent that searches minimal path between two nodes of weighted graph.
 
 Example of an input structure:
 
-<img src="../images/path_finding_agent_input.png"></img>
+<img src="../images/path_search_agent_input.png"></img>
 
 Example of an output structure:
 
-<img src="../images/path_finding_agent_output.png"></img>
+<img src="../images/path_search_agent_output.png"></img>
 
 Example of graph:
 ```
