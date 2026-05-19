@@ -1,10 +1,10 @@
 #!/bin/bash
 
 echo "========================================="
-echo "Установка system dependencies (быстрая)"
+echo "Установка system dependencies (Fedora)"
 echo "========================================="
 
-# Установка всех пакетов через dnf (включая cmake)
+# Установка необходимых пакетов
 sudo dnf install -y \
     curl \
     ccache \
@@ -20,12 +20,16 @@ sudo dnf install -y \
     clang \
     git \
     cmake 
+    
+echo "========================================="
+echo "Установка pipx и Conan"
+echo "========================================="
 
-# Установка pipx (без cmake!)
+# Установка pipx 
 python3 -m pip install --user pipx
 export PATH="$HOME/.local/bin:$PATH"
 
-# Устанавливаем только conan через pipx
+# Установка conan через pipx
 pipx install conan
 
 git submodule update --init --recursive
@@ -46,7 +50,7 @@ export CC=clang
 export CXX=clang++
 export CXXFLAGS="-std=c++17"
 
-# Удаляем старый профиль если есть
+# Удаление старого профиля если есть
 rm -f ~/.conan2/profiles/default
 
 conan profile detect --force
@@ -63,7 +67,7 @@ echo "========================================="
 
 cd interface/sc-web
 
-# Установка зависимостей
+# Установка зависимостей для Fedora
 ./scripts/install_deps_npm.sh || {
     echo "install_deps_npm.sh failed, trying manual npm install"
     npm install
@@ -83,12 +87,12 @@ echo "========================================="
 echo "CMake конфигурация и сборка"
 echo "========================================="
 
-# Проверяем наличие conan профиля
+# Проверка наличие conan профиля
 if [ ! -f ~/.conan2/profiles/default ]; then
     conan profile detect --force
 fi
 
-# Устанавливаем зависимости conan
+# Установка зависимостей conan
 conan install . --build=missing -s compiler=clang -s compiler.version=19 -s compiler.libcxx=libstdc++11
 
 # Сборка
@@ -105,7 +109,6 @@ echo "Установка завершена!"
 echo "========================================="
 echo ""
 echo "Дальнейшие действия:"
-echo "1. Перезагрузите терминал или выполните: source ~/.bashrc"
-echo "2. Собрать базу знаний:   cd industry-demo-ostis && ./scripts/start.sh build_kb"
-echo "3. Запустить sc-machine:  ./scripts/start.sh machine"
-echo "4. В другом терминале:     ./scripts/start.sh web"
+echo "1. Собрать базу знаний:   cd industry-demo-ostis && ./scripts/start.sh build_kb"
+echo "2. Запустить sc-machine:  ./scripts/start.sh machine"
+echo "3. В другом терминале запустить sc-web:     ./scripts/start.sh web"

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e  # Прерывать выполнение при ошибке
-
 echo "========================================="
 echo "Установка system dependencies (Ubuntu)"
 echo "========================================="
@@ -38,7 +36,6 @@ echo "========================================="
 python3 -m pip install --user pipx
 export PATH="$HOME/.local/bin:$PATH"
 
-# Убеждаемся что pipx в PATH
 python3 -m pipx ensurepath
 
 # Установка conan через pipx
@@ -62,7 +59,7 @@ export CC=clang
 export CXX=clang++
 export CXXFLAGS="-std=c++17"
 
-# Удаляем старый профиль если есть
+# Удаление старого профиля если есть
 rm -f ~/.conan2/profiles/default
 
 conan profile detect --force
@@ -99,12 +96,12 @@ echo "========================================="
 echo "CMake конфигурация и сборка"
 echo "========================================="
 
-# Проверяем наличие conan профиля
+# Проверка наличие conan профиля
 if [ ! -f ~/.conan2/profiles/default ]; then
     conan profile detect --force
 fi
 
-# Устанавливаем зависимости conan
+# Установка зависимостей conan
 conan install . --build=missing -s compiler=clang -s compiler.version=$(clang --version | head -n1 | grep -oE '[0-9]+' | head -1) -s compiler.libcxx=libstdc++11
 
 # Сборка
@@ -121,7 +118,6 @@ echo "Установка завершена!"
 echo "========================================="
 echo ""
 echo "Дальнейшие действия:"
-echo "1. Перезагрузите терминал или выполните: source ~/.bashrc"
-echo "2. Собрать базу знаний:   cd industry-demo-ostis && ./scripts/start.sh build_kb"
-echo "3. Запустить sc-machine:  ./scripts/start.sh machine"
-echo "4. В другом терминале:     ./scripts/start.sh web"
+echo "1. Собрать базу знаний:   cd industry-demo-ostis && ./scripts/start.sh build_kb"
+echo "2. Запустить sc-machine:  ./scripts/start.sh machine"
+echo "3. В другом терминале запустить sc-web:     ./scripts/start.sh web"
