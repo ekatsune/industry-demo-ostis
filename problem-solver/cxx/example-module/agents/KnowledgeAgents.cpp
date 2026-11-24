@@ -98,6 +98,17 @@ void AddIncomingRelationValues(ScMemoryContext & context, ScAddr const & concept
     result << iterator->Get(0) << iterator->Get(1) << iterator->Get(3);
 }
 
+void AddIncidentRelations(ScMemoryContext & context, ScAddr const & conceptAddr, ScStructure & result)
+{
+  ScIterator3Ptr outgoing = context.CreateIterator3(conceptAddr, ScType::ConstCommonArc, ScType::Node);
+  while (outgoing->Next())
+    result << outgoing->Get(1) << outgoing->Get(2);
+
+  ScIterator3Ptr incoming = context.CreateIterator3(ScType::Node, ScType::ConstCommonArc, conceptAddr);
+  while (incoming->Next())
+    result << incoming->Get(0) << incoming->Get(1);
+}
+
 ScResult InvalidArguments(ScAction & action)
 {
   return action.FinishWithError();
@@ -171,6 +182,7 @@ ScResult DefinitionAnswerAgent::DoProgram(ScAction & action)
   AddRelationValues(m_context, conceptAddr, Keynodes::nrel_definition, result);
   AddRelationValues(m_context, conceptAddr, Keynodes::nrel_note, result);
   AddIncomingRelationValues(m_context, conceptAddr, Keynodes::nrel_inclusion, result);
+  AddIncidentRelations(m_context, conceptAddr, result);
 
   action.SetResult(result);
   return action.FinishSuccessfully();
