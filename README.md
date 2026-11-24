@@ -77,6 +77,30 @@ Docker simplifies setup and provides a consistent environment.
 
     *Important: Rebuild the knowledge base (step 4) after any changes to the knowledge base files.*
 
+## Python LLM Agents
+
+The Python agents run as a separate Docker service and connect to the existing `machine`
+service over the internal Docker network.
+
+1. Create a local environment file:
+
+   ```sh
+   cp .env.example .env
+   ```
+
+2. Set `TOGETHER_AI_API_KEY` in `.env` to a newly generated Together AI key.
+   Do not commit `.env` to the repository.
+
+3. Build and start the system:
+
+   ```sh
+   docker compose build
+   docker compose up
+   ```
+
+The Python service connects to `ws://machine:8090`. It starts after the
+`machine` health check succeeds.
+
 ## Native Installation by scripts
 
 Steps for installing and running the application directly on your system.
