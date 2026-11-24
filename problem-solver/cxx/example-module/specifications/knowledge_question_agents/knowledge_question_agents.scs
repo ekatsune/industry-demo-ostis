@@ -15,3 +15,7 @@ action_for_relation_explanation <- sc_node_class;
 concept_match_by_main_idtf <- sc_node_class;
 concept_match_by_idtf <- sc_node_class;
 concept_match_by_definition <- sc_node_class;
+
+nrel_path_order <- sc_node_norole;
+nrel_path_start <- sc_node_norole;
+nrel_path_end <- sc_node_norole;
