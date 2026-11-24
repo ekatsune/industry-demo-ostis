@@ -36,6 +36,8 @@ struct RelationValue
 std::vector<RelationValue> GetRelationValues(ScMemoryContext & context, ScAddr const & relation)
 {
   std::vector<RelationValue> values;
+  if (!relation.IsValid())
+    return values;
   ScIterator5Ptr iterator = context.CreateIterator5(
       ScType::Node, ScType::ConstCommonArc, ScType::ConstNodeLink, ScType::ConstPermPosArc, relation);
   while (iterator->Next())
@@ -46,6 +48,8 @@ std::vector<RelationValue> GetRelationValues(ScMemoryContext & context, ScAddr c
 void AddRelationValues(ScMemoryContext & context, ScAddr const & conceptAddr, ScAddr const & relation,
                        ScStructure & result)
 {
+  if (!relation.IsValid())
+    return;
   ScIterator5Ptr iterator = context.CreateIterator5(
       conceptAddr, ScType::ConstCommonArc, ScType::ConstNodeLink, ScType::ConstPermPosArc, relation);
   while (iterator->Next())
@@ -224,13 +228,21 @@ ScResult RelationExplanationAgent::DoProgram(ScAction & action)
   ScStructure path = m_context.GenerateStructure();
   result << start << finish << path;
 
+  ScAddr startPair = m_context.GenerateConnector(ScType::ConstCommonArc, path, start);
+  ScAddr startRelation = m_context.GenerateConnector(ScType::ConstPermPosArc, Keynodes::nrel_path_start, startPair);
+  ScAddr endPair = m_context.GenerateConnector(ScType::ConstCommonArc, path, finish);
+  ScAddr endRelation = m_context.GenerateConnector(ScType::ConstPermPosArc, Keynodes::nrel_path_end, endPair);
+  result << startPair << startRelation << endPair << endRelation;
+
   for (size_t i = 0; i < nodes.size(); ++i)
   {
     path << nodes[i];
     if (i < connectors.size())
     {
       ScAddr order = utils::NumberUtils::ResolveNumber(m_context, static_cast<unsigned>(i + 1));
-      path << connectors[i] << order;
+      ScAddr orderPair = m_context.GenerateConnector(ScType::ConstCommonArc, connectors[i], order);
+      ScAddr orderRelation = m_context.GenerateConnector(ScType::ConstPermPosArc, Keynodes::nrel_path_order, orderPair);
+      path << connectors[i] << order << orderPair << orderRelation;
     }
   }
 
