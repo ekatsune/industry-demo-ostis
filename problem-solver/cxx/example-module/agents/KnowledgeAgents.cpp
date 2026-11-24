@@ -192,13 +192,16 @@ ScResult ClassificationAnswerAgent::DoProgram(ScAction & action)
   ScAddr kindsSet = m_context.GenerateNode(ScType::ConstNode);
   result << kindsSet;
 
-  ScIterator5Ptr iterator = m_context.CreateIterator5(
-      conceptAddr, ScType::ConstCommonArc, ScType::Node, ScType::ConstPermPosArc, Keynodes::nrel_inclusion);
-  while (iterator->Next())
+  if (Keynodes::nrel_inclusion.IsValid())
+  {
+    ScIterator5Ptr iterator = m_context.CreateIterator5(
+        conceptAddr, ScType::ConstCommonArc, ScType::Node, ScType::ConstPermPosArc, Keynodes::nrel_inclusion);
+    while (iterator->Next())
   {
     ScAddr kind = iterator->Get(2);
     ScAddr membership = m_context.GenerateConnector(ScType::ConstPermPosArc, kindsSet, kind);
-    result << membership << kind << iterator->Get(1) << iterator->Get(3);
+      result << membership << kind << iterator->Get(1) << iterator->Get(3);
+    }
   }
 
   action.SetResult(result);
@@ -251,7 +254,10 @@ ScResult RelationExplanationAgent::DoProgram(ScAction & action)
   }
 
   if (previousNode.find(finish) == previousNode.end())
+  {
+    m_logger.Warning("Insufficient knowledge-base data: no path connects the requested concepts.");
     return action.FinishWithError();
+  }
 
   std::vector<ScAddr> nodes;
   std::vector<ScAddr> connectors;
