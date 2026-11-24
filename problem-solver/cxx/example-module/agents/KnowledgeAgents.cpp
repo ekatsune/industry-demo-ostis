@@ -116,8 +116,7 @@ ScResult ConceptSearchAgent::DoProgram(ScAction & action)
     return InvalidArguments(action);
 
   std::string query;
-  m_context.GetLinkContent(queryLink, query);
-  if (query.empty())
+  if (!m_context.GetLinkContent(queryLink, query) || query.empty())
     return InvalidArguments(action);
 
   std::string const normalizedQuery = Normalize(query);
@@ -140,8 +139,8 @@ ScResult ConceptSearchAgent::DoProgram(ScAction & action)
     for (auto const & value : GetRelationValues(m_context, field.relation))
     {
       std::string content;
-      m_context.GetLinkContent(value.link, content);
-      if (Normalize(content).find(normalizedQuery) == std::string::npos)
+      if (!m_context.GetLinkContent(value.link, content) ||
+          Normalize(content).find(normalizedQuery) == std::string::npos)
         continue;
 
       ScAddr membership = m_context.GenerateConnector(ScType::ConstPermPosArc, resultsSet, value.owner);
@@ -198,8 +197,8 @@ ScResult ClassificationAnswerAgent::DoProgram(ScAction & action)
         conceptAddr, ScType::ConstCommonArc, ScType::Node, ScType::ConstPermPosArc, Keynodes::nrel_inclusion);
     while (iterator->Next())
   {
-    ScAddr kind = iterator->Get(2);
-    ScAddr membership = m_context.GenerateConnector(ScType::ConstPermPosArc, kindsSet, kind);
+      ScAddr kind = iterator->Get(2);
+      ScAddr membership = m_context.GenerateConnector(ScType::ConstPermPosArc, kindsSet, kind);
       result << membership << kind << iterator->Get(1) << iterator->Get(3);
     }
   }
