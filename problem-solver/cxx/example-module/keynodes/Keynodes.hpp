@@ -36,4 +36,8 @@ public:
   static inline ScKeynode const concept_match_by_main_idtf{"concept_match_by_main_idtf", ScType::ConstNodeClass};
   static inline ScKeynode const concept_match_by_idtf{"concept_match_by_idtf", ScType::ConstNodeClass};
   static inline ScKeynode const concept_match_by_definition{"concept_match_by_definition", ScType::ConstNodeClass};
+
+  static inline ScKeynode const nrel_path_order{"nrel_path_order", ScType::ConstNodeNonRole};
+  static inline ScKeynode const nrel_path_start{"nrel_path_start", ScType::ConstNodeNonRole};
+  static inline ScKeynode const nrel_path_end{"nrel_path_end", ScType::ConstNodeNonRole};
 };
