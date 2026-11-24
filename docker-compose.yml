@@ -44,6 +44,24 @@ services:
     command:
       - "run"
 
+  llm-agents:
+    build:
+      context: https://github.com/ekatsune/Savushkin_LLM_agents.git#integration/docker-service
+    restart: unless-stopped
+    networks:
+      - sc-machine
+    depends_on:
+      machine:
+        condition: service_healthy
+    environment:
+      TOGETHER_AI_API_KEY: ${TOGETHER_AI_API_KEY:-}
+    command:
+      - "python"
+      - "server.py"
+      - "--protocol=ws"
+      - "--host=machine"
+      - "--port=8090"
+
 volumes:
   kb-binary: {}
 
