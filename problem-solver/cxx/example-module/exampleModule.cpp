@@ -10,9 +10,14 @@
 #include "agents/IsomorphicSearchAgent.hpp"
 #include "agents/PathSearchAgent.hpp"
 #include "agents/ExampleInferenceAgent.hpp"
+#include "agents/KnowledgeAgents.hpp"
 
 SC_MODULE_REGISTER(ExampleModule)
     ->Agent<SubdividingSearchAgent>()
     ->Agent<IsomorphicSearchAgent>()
     ->Agent<PathSearchAgent>()
-    ->Agent<ExampleInferenceAgent>();
+    ->Agent<ExampleInferenceAgent>()
+    ->Agent<ConceptSearchAgent>()
+    ->Agent<DefinitionAnswerAgent>()
+    ->Agent<ClassificationAnswerAgent>()
+    ->Agent<RelationExplanationAgent>();
