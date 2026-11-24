@@ -43,7 +43,7 @@ std::string Normalize(std::string const & value)
       }
       if (next == 0x81)
       {
-        result += "\\xD1\\x91";
+        result += "\xD1\x91";
         ++i;
         continue;
       }
