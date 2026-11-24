@@ -54,7 +54,7 @@ services:
       machine:
         condition: service_healthy
     environment:
-      TOGETHER_AI_API_KEY: ${TOGETHER_AI_API_KEY:-}
+      TOGETHER_AI_API_KEY: ${TOGETHER_AI_API_KEY:?Set TOGETHER_AI_API_KEY in .env}
     command:
       - "python"
       - "server.py"
