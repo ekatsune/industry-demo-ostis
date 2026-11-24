@@ -19,10 +19,39 @@
 
 namespace
 {
-std::string Normalize(std::string value)
+std::string Normalize(std::string const & value)
 {
-  std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-  return value;
+  std::string result;
+  for (size_t i = 0; i < value.size(); ++i)
+  {
+    unsigned char current = static_cast<unsigned char>(value[i]);
+    if (current >= 'A' && current <= 'Z')
+    {
+      result.push_back(static_cast<char>(current + ('a' - 'A')));
+      continue;
+    }
+
+    if (current == 0xD0 && i + 1 < value.size())
+    {
+      unsigned char next = static_cast<unsigned char>(value[i + 1]);
+      if (next >= 0x90 && next <= 0xAF)
+      {
+        result.push_back(static_cast<char>(0xD0));
+        result.push_back(static_cast<char>(next + 0x20));
+        ++i;
+        continue;
+      }
+      if (next == 0x81)
+      {
+        result += "\\xD1\\x91";
+        ++i;
+        continue;
+      }
+    }
+
+    result.push_back(static_cast<char>(current));
+  }
+  return result;
 }
 
 struct RelationValue
@@ -56,6 +85,17 @@ void AddRelationValues(ScMemoryContext & context, ScAddr const & conceptAddr, Sc
   {
     result << iterator->Get(1) << iterator->Get(2) << iterator->Get(3);
   }
+}
+
+void AddIncomingRelationValues(ScMemoryContext & context, ScAddr const & conceptAddr, ScAddr const & relation,
+                               ScStructure & result)
+{
+  if (!relation.IsValid())
+    return;
+  ScIterator5Ptr iterator = context.CreateIterator5(
+      ScType::Node, ScType::ConstCommonArc, conceptAddr, ScType::ConstPermPosArc, relation);
+  while (iterator->Next())
+    result << iterator->Get(0) << iterator->Get(1) << iterator->Get(3);
 }
 
 ScResult InvalidArguments(ScAction & action)
@@ -131,7 +171,7 @@ ScResult DefinitionAnswerAgent::DoProgram(ScAction & action)
   result << conceptAddr;
   AddRelationValues(m_context, conceptAddr, Keynodes::nrel_definition, result);
   AddRelationValues(m_context, conceptAddr, Keynodes::nrel_note, result);
-  AddRelationValues(m_context, conceptAddr, Keynodes::nrel_inclusion, result);
+  AddIncomingRelationValues(m_context, conceptAddr, Keynodes::nrel_inclusion, result);
 
   action.SetResult(result);
   return action.FinishSuccessfully();
