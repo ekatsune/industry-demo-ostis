@@ -72,7 +72,8 @@ ScResult ConceptSearchAgent::DoProgram(ScAction & action)
     return InvalidArguments(action);
 
   std::string query;
-  if (!m_context.GetLinkContent(queryLink, query) || query.empty())
+  m_context.GetLinkContent(queryLink, query);
+  if (query.empty())
     return InvalidArguments(action);
 
   std::string const normalizedQuery = Normalize(query);
@@ -95,8 +96,8 @@ ScResult ConceptSearchAgent::DoProgram(ScAction & action)
     for (auto const & value : GetRelationValues(m_context, field.relation))
     {
       std::string content;
-      if (!m_context.GetLinkContent(value.link, content) ||
-          Normalize(content).find(normalizedQuery) == std::string::npos)
+      m_context.GetLinkContent(value.link, content);
+      if (Normalize(content).find(normalizedQuery) == std::string::npos)
         continue;
 
       ScAddr membership = m_context.GenerateConnector(ScType::ConstPermPosArc, resultsSet, value.owner);
