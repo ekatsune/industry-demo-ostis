@@ -7,11 +7,11 @@
  * relation explanation: start concept, end concept.
  */
 
-action_for_concept_search <- sc_node_class;;
-action_for_definition_answer <- sc_node_class;;
-action_for_classification_answer <- sc_node_class;;
-action_for_relation_explanation <- sc_node_class;;
+action_for_concept_search <- sc_node_class;
+action_for_definition_answer <- sc_node_class;
+action_for_classification_answer <- sc_node_class;
+action_for_relation_explanation <- sc_node_class;
 
-concept_match_by_main_idtf <- sc_node_class;;
-concept_match_by_idtf <- sc_node_class;;
-concept_match_by_definition <- sc_node_class;;
+concept_match_by_main_idtf <- sc_node_class;
+concept_match_by_idtf <- sc_node_class;
+concept_match_by_definition <- sc_node_class;
